@@ -122,7 +122,10 @@ export class SyncEngine {
     if (habitOperations.length > 0) {
       const { error } = await this.client
         .from('habits')
-        .upsert(habitOperations.map((operation) => toRemoteHabit(operation.payload as Habit)))
+        .upsert(
+          habitOperations.map((operation) => toRemoteHabit(operation.payload as Habit)),
+          { onConflict: 'id' }
+        )
       if (error) {
         throw error
       }
@@ -131,7 +134,10 @@ export class SyncEngine {
     if (checkInOperations.length > 0) {
       const { error } = await this.client
         .from('checkins')
-        .upsert(checkInOperations.map((operation) => toRemoteCheckIn(operation.payload as CheckIn)))
+        .upsert(
+          checkInOperations.map((operation) => toRemoteCheckIn(operation.payload as CheckIn)),
+          { onConflict: 'habit_id,check_date' }
+        )
       if (error) {
         throw error
       }

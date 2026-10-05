@@ -49,6 +49,21 @@ function createId(): string {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`
 }
 
+function getSyncErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  if (typeof error === 'object' && error !== null && 'message' in error) {
+    const message = (error as { message?: unknown }).message
+    if (typeof message === 'string' && message.trim()) {
+      return message
+    }
+  }
+
+  return '同步失败，请稍后重试'
+}
+
 function LoadingScreen() {
   return (
     <main className="loading-page">
@@ -103,7 +118,7 @@ export default function App() {
       await syncEngineRef.current.sync(session.user.id)
       setSnapshot(await database.loadSnapshot())
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : '同步失败，请稍后重试')
+      setErrorMessage(getSyncErrorMessage(error))
     }
   }, [database, session])
 

@@ -36,6 +36,10 @@ create index if not exists checkins_user_updated_idx
 alter table public.habits enable row level security;
 alter table public.checkins enable row level security;
 
+grant usage on schema public to authenticated;
+grant select, insert, update, delete on table public.habits to authenticated;
+grant select, insert, update, delete on table public.checkins to authenticated;
+
 drop policy if exists "Users can read own habits" on public.habits;
 create policy "Users can read own habits"
   on public.habits for select
